@@ -1,10 +1,14 @@
+# Virtual environment and cache
 venv/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-models/best_model.joblib
-models/*.joblib
-outputs/*.png
-outputs/processed_data.csv
 .env
 .DS_Store
+
+# Ignore large files that exceed GitHub size limits
+models/random_forest.joblib
+models/gradient_boosting.joblib
+
+# Ignore processed dataset (raw csv is fine at 6.3MB, but processed is 13.9MB and not needed by app)
+outputs/processed_data.csv
