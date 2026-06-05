@@ -114,7 +114,11 @@ except Exception as e:
 try:
     models, metadata, all_results = load_models()
     models_loaded = len(models) > 0
+    if not models_loaded:
+        st.sidebar.warning("No models loaded from the models/ directory.")
 except Exception as e:
+    st.sidebar.error(f"Error loading models: {e}")
+    st.exception(e)  # This will print the full traceback to help us debug
     models_loaded = False
 
 
