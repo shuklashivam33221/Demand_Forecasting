@@ -116,14 +116,6 @@ try:
     models_loaded = len(models) > 0
     if not models_loaded:
         st.sidebar.warning("No models loaded from the models/ directory.")
-        st.sidebar.write("Diagnostics:")
-        st.sidebar.write("- APP_DIR:", APP_DIR)
-        models_path = os.path.join(APP_DIR, "models")
-        if os.path.exists(models_path):
-            st.sidebar.write("- models/ exists. Contents:", os.listdir(models_path))
-        else:
-            st.sidebar.write("- models/ folder NOT found at:", models_path)
-        st.sidebar.write("- Root contents:", os.listdir(APP_DIR))
 except Exception as e:
     st.sidebar.error(f"Error loading models: {e}")
     st.exception(e)  # This will print the full traceback to help us debug
