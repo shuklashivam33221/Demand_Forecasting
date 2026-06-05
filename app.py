@@ -1,14 +1,9 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import joblib
 import json
 import os
 from PIL import Image
-import plotly.express as px
-import plotly.graph_objects as go
 
 # ─── Configuration ────────────────────────────────────────────────────────
 st.set_page_config(
@@ -118,7 +113,6 @@ try:
         st.sidebar.warning("No models loaded from the models/ directory.")
 except Exception as e:
     st.sidebar.error(f"Error loading models: {e}")
-    st.exception(e)  # This will print the full traceback to help us debug
     models_loaded = False
 
 
@@ -145,7 +139,6 @@ if app_mode == "Data Explorer" and data_loaded:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        # Check if Date exists, otherwise use whatever is first
         if "Date" in df.columns:
             date_range = st.date_input("Date Range", [df["Date"].min(), df["Date"].max()])
         
@@ -277,13 +270,7 @@ elif app_mode == "Predict Demand":
             
             input_data = {}
             
-            # This is a simplified input form. In a real scenario, you'd want more 
-            # user-friendly inputs that map to the engineered features.
-            # Since the features are engineered, we provide raw inputs and would 
-            # ideally apply the feature engineering pipeline.
-            # For this MVP, we'll try to match the inputs to the required features if possible.
-            
-            st.info("Note: This form requires pre-engineered feature values as trained by the model.")
+            st.info("Adjust the feature values below and click 'Generate Forecast' to predict demand.")
             
             # Dynamically generate inputs for required features
             for i, feature in enumerate(features):
