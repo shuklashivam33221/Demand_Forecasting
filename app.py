@@ -94,7 +94,7 @@ st.sidebar.markdown("Explore data, view EDA, and predict future demand.")
 
 app_mode = st.sidebar.radio(
     "Navigate",
-    ["Data Explorer", "EDA Visualizations", "Model Performance", "Predict Demand"]
+    ["Data Explorer", "EDA Visualizations", "Model Performance", "Time-Series & DL", "Predict Demand"]
 )
 
 # ─── Load Data & Models ─────────────────────────────────────────────────────
@@ -317,4 +317,44 @@ elif app_mode == "Predict Demand":
             except Exception as e:
                 st.error(f"Error making prediction: {e}")
                 st.error("Please ensure all input features match the model's expected format.")
+
+
+# ─── Tab 5: Time-Series & DL ────────────────────────────────────────────────
+elif app_mode == "Time-Series & DL":
+    st.title("⏳ Time-Series & Deep Learning Models")
+    st.markdown("Forecasting **daily aggregated demand** using time-series and deep learning architectures.")
+    
+    # Load Time-Series Results
+    ts_results_path = os.path.join(APP_DIR, "models", "ts_results.json")
+    if os.path.exists(ts_results_path):
+        with open(ts_results_path, "r") as f:
+            ts_results = json.load(f)
+            
+        st.subheader("Time-Series Metrics Comparison")
+        st.markdown("Models trained on total daily demand sequences. Notice how **XGBoost (with lag features)** outperforms traditional TS (ARIMA/Prophet) and Deep Learning (LSTM) on this specific dataset.")
+        
+        # Format results into a dataframe
+        ts_metrics_df = pd.DataFrame(ts_results).T
+        st.dataframe(ts_metrics_df.style.highlight_min(axis=0, subset=["MAE", "RMSE", "MAPE"])
+                                     .highlight_max(axis=0, subset=["R2"]), 
+                     use_container_width=True)
+                     
+        st.markdown("---")
+        st.subheader("Visualizations")
+        
+        img_comparison = load_image("17_ts_forecast_comparison.png")
+        if img_comparison:
+            st.image(img_comparison, caption="Forecast Comparison vs Actual Daily Demand", use_container_width=True)
+            
+        col1, col2 = st.columns(2)
+        with col1:
+            img_metrics = load_image("18_ts_model_comparison.png")
+            if img_metrics:
+                st.image(img_metrics, caption="Model Metrics", use_container_width=True)
+        with col2:
+            img_res = load_image("19_ts_residuals.png")
+            if img_res:
+                st.image(img_res, caption="Residuals Distribution", use_container_width=True)
+    else:
+        st.warning("Time-series results not found. Please run `python src/train_timeseries.py` first.")
 
