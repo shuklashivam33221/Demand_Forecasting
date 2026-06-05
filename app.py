@@ -37,11 +37,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+# Get the directory of the app.py script
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 # ─── Helper Functions ───────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    raw_path = "demand_forecasting.csv"
-    processed_path = "outputs/processed_data.csv"
+    raw_path = os.path.join(APP_DIR, "demand_forecasting.csv")
+    processed_path = os.path.join(APP_DIR, "outputs", "processed_data.csv")
     
     if os.path.exists(processed_path):
         df = pd.read_csv(processed_path, parse_dates=["Date"])
@@ -52,33 +56,38 @@ def load_data():
 
 @st.cache_resource
 def load_models():
-    models_dir = "models"
-    model_files = [f for f in os.listdir(models_dir) if f.endswith(".joblib") and f != "best_model.joblib"]
+    models_dir = os.path.join(APP_DIR, "models")
     models = {}
-    for f in model_files:
-        name = f.replace(".joblib", "").replace("_", " ").title()
-        models[name] = joblib.load(os.path.join(models_dir, f))
-    
-    # Load best model specifically
-    if os.path.exists(os.path.join(models_dir, "best_model.joblib")):
-        models["Best Model"] = joblib.load(os.path.join(models_dir, "best_model.joblib"))
-        
-    # Load metadata
     metadata = {}
-    if os.path.exists(os.path.join(models_dir, "model_metadata.json")):
-        with open(os.path.join(models_dir, "model_metadata.json"), "r") as f:
-            metadata = json.load(f)
-            
-    # Load all results
     all_results = {}
-    if os.path.exists(os.path.join(models_dir, "all_results.json")):
-        with open(os.path.join(models_dir, "all_results.json"), "r") as f:
-            all_results = json.load(f)
+    
+    if os.path.exists(models_dir):
+        model_files = [f for f in os.listdir(models_dir) if f.endswith(".joblib") and f != "best_model.joblib"]
+        for f in model_files:
+            name = f.replace(".joblib", "").replace("_", " ").title()
+            models[name] = joblib.load(os.path.join(models_dir, f))
+        
+        # Load best model specifically
+        best_model_path = os.path.join(models_dir, "best_model.joblib")
+        if os.path.exists(best_model_path):
+            models["Best Model"] = joblib.load(best_model_path)
+            
+        # Load metadata
+        metadata_path = os.path.join(models_dir, "model_metadata.json")
+        if os.path.exists(metadata_path):
+            with open(metadata_path, "r") as f:
+                metadata = json.load(f)
+                
+        # Load all results
+        results_path = os.path.join(models_dir, "all_results.json")
+        if os.path.exists(results_path):
+            with open(results_path, "r") as f:
+                all_results = json.load(f)
             
     return models, metadata, all_results
 
 def load_image(filename):
-    path = os.path.join("outputs", filename)
+    path = os.path.join(APP_DIR, "outputs", filename)
     if os.path.exists(path):
         return Image.open(path)
     return None
