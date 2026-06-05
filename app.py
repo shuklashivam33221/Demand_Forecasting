@@ -55,7 +55,7 @@ def load_data():
     return df
 
 @st.cache_resource
-def load_models():
+def load_ml_models():
     models_dir = os.path.join(APP_DIR, "models")
     models = {}
     metadata = {}
@@ -112,7 +112,7 @@ except Exception as e:
     data_loaded = False
 
 try:
-    models, metadata, all_results = load_models()
+    models, metadata, all_results = load_ml_models()
     models_loaded = len(models) > 0
     if not models_loaded:
         st.sidebar.warning("No models loaded from the models/ directory.")
